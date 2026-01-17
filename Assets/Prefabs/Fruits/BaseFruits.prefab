@@ -163,3 +163,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 8199721233106907281}
   _rigidbody: {fileID: 5897413772036376299}
+  _collider: {fileID: 4918277670714482522}

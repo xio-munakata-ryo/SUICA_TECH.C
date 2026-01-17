@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     public static float StaticOverLineTimeSec = 3f;
     private float _overLineTimeFrame = 0f;
 
+    private FruitsController _popFruitsShadow = null;
+
+    private FruitsType _nextFruitsType = FruitsType.None;
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
@@ -48,7 +52,7 @@ public class GameManager : MonoBehaviour
     {
         _isGameOver = true;
         _staticGameOverUI.SetActive(true);
-        
+
         // 背景の物理演算を全て止める
         FruitsController.SetAllRigidbodyToCinematic();
     }
@@ -114,6 +118,20 @@ public class GameManager : MonoBehaviour
         // 超えて一定時間経過するとゲームオーバーなLineを取得
         _staticOverLine = _overLine;
         StaticOverLineTimeSec = _overLineTimeSec;
+
+        // 次に生成される予定のフルーツの影を、マウス移動に合わせて画面に表示
+        _popFruitsShadow = Instantiate(_listPrefabFruits[0]);
+        _nextFruitsType
+             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
+        _popFruitsShadow.SetType(_nextFruitsType);
+        Data nd = new Data(_nextFruitsType, _popFruitsShadow);
+        _popFruitsShadow.SetData(nd);
+        Color color = ColorPallet[_nextFruitsType];
+        color.a = 0.5f;
+        _popFruitsShadow.SetColor(color);
+        _popFruitsShadow.SetDrawOrder(1000);
+        Destroy(_popFruitsShadow.Collider);
+        Destroy(_popFruitsShadow.Rigidbody);
     }
 
     // Update is called once per frame
@@ -121,27 +139,39 @@ public class GameManager : MonoBehaviour
     {
         if (_isGameOver) return;
 
+        Vector2 mPos = Input.mousePosition;
+        Vector2 wPos = Camera.main.ScreenToWorldPoint(mPos);
+        if (wPos.x < -1.6) wPos.x = -1.6f;
+        if (wPos.x > 1.6) wPos.x = 1.6f;
+
+        _popFruitsShadow.transform.position = new Vector3(wPos.x, OverLineY, 0f);
+
         if (Input.GetMouseButtonDown(0))
         {
-            Vector2 mPos = Input.mousePosition;
-            Vector2 wPos = Camera.main.ScreenToWorldPoint(mPos);
             Vector3 fruitsPopPos = wPos;
 
-            if (wPos.x < -1.6) fruitsPopPos.x = -1.6f;
-            if (wPos.x > 1.6) fruitsPopPos.x = 1.6f;
             fruitsPopPos.y = OverLineY;
 
-            FruitsType popedFruitsType
-             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
-
-            FruitsController c = Instantiate(_listPrefabFruits[(int)popedFruitsType - 1]
+            FruitsController c = Instantiate(_listPrefabFruits[(int)_nextFruitsType - 1]
                                     , fruitsPopPos
                                     , Quaternion.identity);
-            c.SetType(popedFruitsType);
-            Data d = new Data(popedFruitsType, c);
+            c.SetType(_nextFruitsType);
+            Data d = new Data(_nextFruitsType, c);
             c.SetData(d);
-            c.SetColor(ColorPallet[popedFruitsType]);
+            c.SetColor(ColorPallet[_nextFruitsType]);
             _listData.Add(d);
+            _nextFruitsType
+             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
+
+            // フルーツの影を変更
+            _nextFruitsType
+             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
+            _popFruitsShadow.SetType(_nextFruitsType);
+            Data nd = new Data(_nextFruitsType, _popFruitsShadow);
+            _popFruitsShadow.SetData(nd);
+            Color color = ColorPallet[_nextFruitsType];
+            color.a = 0.5f;
+            _popFruitsShadow.SetColor(color);
         }
 
         // フルーツのどれかが境界線を超えたら

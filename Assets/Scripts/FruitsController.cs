@@ -22,12 +22,23 @@ public class FruitsController : MonoBehaviour
     private Rigidbody2D _rigidbody = null;
     public Rigidbody2D Rigidbody => _rigidbody;
 
+    [SerializeField] private Collider2D _collider = null;
+    public Collider2D Collider => _collider;
+
     public static void SetAllRigidbodyToCinematic()
     {
         foreach (var controller in _listFruitsController)
         {
-            controller.Rigidbody.simulated = false;
+            if (controller.Rigidbody != null)
+            {
+                controller.Rigidbody.simulated = false;
+            }
         }
+    }
+
+    public void SetDrawOrder(int orderNum)
+    {
+        spriteRenderer.sortingOrder = orderNum;
     }
 
     public void SetType(FruitsType type)
@@ -54,6 +65,9 @@ public class FruitsController : MonoBehaviour
     void Start()
     {
         _listFruitsController.Add(this);
+
+        // Unityのあほみたいな物理演算だと、同位置から丸を落とすと上に積むことができちゃうので、わずかに出現位置をブレさせる
+        _rigidbody.velocity = new Vector2(UnityEngine.Random.Range(-0.1f, 0.1f), 0f);
     }
 
     void OnDestroy()
