@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.ParticleSystem;
 
 public class FruitsController : MonoBehaviour
 {
+    [SerializeField] private GameObject _particle;
     private static List<FruitsController> _listFruitsController = new List<FruitsController>();
     public static List<FruitsController> ListFruitsController => _listFruitsController;
 
@@ -17,6 +19,7 @@ public class FruitsController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Color _color;
+    
 
     public void SetType(FruitsType type)
     {
@@ -98,7 +101,13 @@ public class FruitsController : MonoBehaviour
                 this.transform.position = Vector3.Lerp(this.transform.position, other.transform.position, 0.5f);
             }
 
+            //var impulseSource = GetComponent<CinemachineImpulseSource>();
+            //impulseSource.GenerateImpulse();
+            _particle.GetComponent<ParticleSystem>().startColor = this._color;
+            Instantiate(_particle, this.transform.position, Quaternion.identity);
             GameManager.AddPoint((int)nextType);
         }
     }
 }
+
+
