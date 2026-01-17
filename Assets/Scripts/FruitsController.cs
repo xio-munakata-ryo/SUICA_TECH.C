@@ -7,6 +7,7 @@ public class FruitsController : MonoBehaviour
     private static List<FruitsController> _listFruitsController = new List<FruitsController>();
     public static List<FruitsController> ListFruitsController => _listFruitsController;
 
+    [SerializeField] private ParticleController _margeEffect;
     private FruitsType _type;
     public FruitsType Type => _type;
 
@@ -82,7 +83,9 @@ public class FruitsController : MonoBehaviour
 
             // 自分成長
             FruitsType nextType = this.Type + 1;
-
+            var effect = Instantiate(_margeEffect, this.transform.position, Quaternion.identity);
+            effect.SetColor(GameManager.ColorPallet[nextType]);
+            CameraShaker.Instance.Shake();
             if (nextType == FruitsType.MAX)
             {
                 Destroy(this.gameObject);

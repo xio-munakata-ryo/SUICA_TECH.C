@@ -161,4 +161,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b39c80ad189f446a470f32e078a33f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _margeEffect: {fileID: 6882917948233808931, guid: 97ddcaf8c40241847832a9f5b2376782, type: 3}
   spriteRenderer: {fileID: 8199721233106907281}
