@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class FruitsController : MonoBehaviour
 {
+    private Action _onDisappear;
+
     private static List<FruitsController> _listFruitsController = new List<FruitsController>();
     public static List<FruitsController> ListFruitsController => _listFruitsController;
 
@@ -60,7 +61,7 @@ public class FruitsController : MonoBehaviour
         }
     }
 
-    
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer != 3) return;
@@ -98,7 +99,15 @@ public class FruitsController : MonoBehaviour
                 this.transform.position = Vector3.Lerp(this.transform.position, other.transform.position, 0.5f);
             }
 
+            _onDisappear?.Invoke();
             GameManager.AddPoint((int)nextType);
         }
+    }
+
+    /// <summary>消えた時のコールバックに処理をバインド</summary>
+    /// <param name="cb">バインドする処理</param>
+    public void BindOnDisappearCallBack(Action cb)
+    {
+        _onDisappear += cb;
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField]
+    private ShakeCamera _shakeCamera;
 
     [SerializeField]
     private List<FruitsController> _listPrefabFruits = new List<FruitsController>();
@@ -41,6 +43,12 @@ public class GameManager : MonoBehaviour
         _staticGameOverUI.SetActive(true);
     }
 
+    /// <summary>フルーツが消えた時の処理</summary>
+    private void OnDisappearFruits()
+    {
+        StartCoroutine(_shakeCamera.Cor_ShakeVertical(0.1f));
+    }
+
     public void Retry()
     {
         // UI群　非表示
@@ -53,7 +61,7 @@ public class GameManager : MonoBehaviour
         // リトライになったら、全てのフルーツを消す
         foreach (var d in _listData)
         {
-            if(d.FruitsObj != null)
+            if (d.FruitsObj != null)
             {
                 Destroy(d.FruitsObj.gameObject);
             }
@@ -110,6 +118,7 @@ public class GameManager : MonoBehaviour
             Data d = new Data(popedFruitsType, c);
             c.SetData(d);
             c.SetColor(ColorPallet[popedFruitsType]);
+            c.BindOnDisappearCallBack(OnDisappearFruits);
             _listData.Add(d);
         }
     }
