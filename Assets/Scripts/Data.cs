@@ -39,7 +39,7 @@ public class Data
             Radius = 0.1f;
             break;
             default:
-            Radius = 0.2f + (float)Type * 0.2f;
+            Radius = 0.2f + (float)Type * 0.1f;
             break;
         }
 

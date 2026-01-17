@@ -1,7 +1,8 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(CinemachineImpulseSource))]
 public class FruitsController : MonoBehaviour
 {
     private static List<FruitsController> _listFruitsController = new List<FruitsController>();
@@ -12,7 +13,21 @@ public class FruitsController : MonoBehaviour
 
     private Data _data;
 
-    [SerializeField] private SpriteRenderer spriteRenderer;
+   [SerializeField] private SpriteRenderer spriteRenderer;
+
+    [SerializeField] private Sprite sprite1;
+    [SerializeField] private Sprite sprite2;
+    [SerializeField] private Sprite sprite3;
+    [SerializeField] private Sprite sprite4;
+    [SerializeField] private Sprite sprite5;
+    [SerializeField] private Sprite sprite6;
+    [SerializeField] private Sprite sprite7;
+    [SerializeField] private Sprite sprite8;
+    [SerializeField] private Sprite sprite9;
+    [SerializeField] private Sprite sprite10;
+    [SerializeField] private Sprite sprite11;
+
+    [SerializeField] private int Rank = 0;
 
     private Color _color;
 
@@ -40,6 +55,7 @@ public class FruitsController : MonoBehaviour
     void Start()
     {
         _listFruitsController.Add(this);
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void OnDestroy()
@@ -55,6 +71,43 @@ public class FruitsController : MonoBehaviour
             Destroy(this.gameObject);
 
             GameManager.SetGameOver();
+        }
+
+        switch(Rank)
+        {
+                case 1:
+                spriteRenderer.sprite = sprite1;
+                break;
+                case 2:
+                spriteRenderer.sprite = sprite2;
+                break;
+            case 3:
+                spriteRenderer.sprite = sprite3;
+                break;
+            case 4:
+                spriteRenderer.sprite = sprite4;
+                break;
+            case 5:
+                spriteRenderer.sprite = sprite5;
+                break;
+            case 6:
+                spriteRenderer.sprite = sprite6;
+                break;
+            case 7:
+                spriteRenderer.sprite = sprite7;
+                break;
+            case 8:
+                spriteRenderer.sprite = sprite8;
+                break;
+            case 9:
+                spriteRenderer.sprite = sprite9;
+                break;
+            case 10:
+                spriteRenderer.sprite = sprite10;
+                break;
+            case 11:
+                spriteRenderer.sprite = sprite11;
+                break;
         }
     }
 
@@ -79,10 +132,18 @@ public class FruitsController : MonoBehaviour
         {
             // 相手側消す
             Destroy(other.gameObject);
+            Rank++;
 
             // 自分成長
-            FruitsType nextType = this.Type + 1;
 
+            var impulseSource = GetComponent<CinemachineImpulseSource>();
+            if(impulseSource != null)
+            {
+            impulseSource.GenerateImpulse(1.5f);
+            }
+
+            //impulseSource.GenerateImpulse();
+            FruitsType nextType = this.Type + 1;
             if (nextType == FruitsType.MAX)
             {
                 Destroy(this.gameObject);
