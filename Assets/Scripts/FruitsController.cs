@@ -25,13 +25,15 @@ public class FruitsController : MonoBehaviour
     [SerializeField] private Collider2D _collider = null;
     public Collider2D Collider => _collider;
 
+    private float _size = 1f;
+
     public static void SetAllRigidbodyToCinematic()
     {
         foreach (var controller in _listFruitsController)
         {
             if (controller.Rigidbody != null)
             {
-                controller.Rigidbody.simulated = false;
+                Destroy(controller.Rigidbody);
             }
         }
     }
@@ -61,6 +63,26 @@ public class FruitsController : MonoBehaviour
         }
     }
 
+    private IEnumerator PopBornCor()
+    {
+        float frame = 0f;
+
+        while (frame < 0.25f)
+        {
+            frame += Time.deltaTime;
+            float per = frame / 0.25f;
+            per = 1f - (1f - per) * (1 - per) * (1 - per) * (1 - per);
+
+            this.transform.localScale = Vector3.one * per * _size;
+
+            yield return null;
+        }
+
+        this.transform.localScale = Vector3.one * _size;
+        if (this.Rigidbody != null) this.Rigidbody.simulated = true;
+        if (this.Collider != null) this.Collider.enabled = true;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,6 +90,18 @@ public class FruitsController : MonoBehaviour
 
         // Unityのあほみたいな物理演算だと、同位置から丸を落とすと上に積むことができちゃうので、わずかに出現位置をブレさせる
         _rigidbody.velocity = new Vector2(UnityEngine.Random.Range(-0.1f, 0.1f), 0f);
+
+        Pop();
+    }
+
+    public void Pop()
+    {
+        // 大きさを記録して、発生時にポップするアニメーションをコルーチンで実装
+        _size = this.transform.localScale.x;
+        this.transform.localScale = Vector3.zero;
+         if (this.Rigidbody != null) this.Rigidbody.simulated = false;
+         if (this.Collider != null) this.Collider.enabled = false;
+        StartCoroutine(PopBornCor());
     }
 
     void OnDestroy()
@@ -141,6 +175,8 @@ public class FruitsController : MonoBehaviour
                 this.SetColor(GameManager.ColorPallet[nextType]);
 
                 this.transform.position = Vector3.Lerp(this.transform.position, other.transform.position, 0.5f);
+
+                this.Pop();
             }
 
             GameManager.AddPoint((int)nextType);

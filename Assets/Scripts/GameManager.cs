@@ -121,8 +121,11 @@ public class GameManager : MonoBehaviour
 
         // 次に生成される予定のフルーツの影を、マウス移動に合わせて画面に表示
         _popFruitsShadow = Instantiate(_listPrefabFruits[0]);
+
+        //出てくるフルーツを小さめに
         _nextFruitsType
-             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
+         = (FruitsType)(UnityEngine.Random.Range(1
+            , _listPrefabFruits.Count <= 5 ? _listPrefabFruits.Count : 6));
         _popFruitsShadow.SetType(_nextFruitsType);
         Data nd = new Data(_nextFruitsType, _popFruitsShadow);
         _popFruitsShadow.SetData(nd);
@@ -160,12 +163,13 @@ public class GameManager : MonoBehaviour
             c.SetData(d);
             c.SetColor(ColorPallet[_nextFruitsType]);
             _listData.Add(d);
-            _nextFruitsType
-             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
 
             // フルーツの影を変更
+            //出てくるフルーツを小さめに
             _nextFruitsType
-             = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
+             = (FruitsType)(UnityEngine.Random.Range(1
+                , _listPrefabFruits.Count <= 5 ? _listPrefabFruits.Count : 6));
+
             _popFruitsShadow.SetType(_nextFruitsType);
             Data nd = new Data(_nextFruitsType, _popFruitsShadow);
             _popFruitsShadow.SetData(nd);
