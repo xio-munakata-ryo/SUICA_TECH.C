@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Score;
-using System.Threading.Tasks;
 
 public class MainGameManager : SingletonMonoBehaviour<MainGameManager>
 {
@@ -45,31 +44,15 @@ public class MainGameManager : SingletonMonoBehaviour<MainGameManager>
         _gameOverUI.SetActive(_isGameOver);
     }
 
-    public async void Retry()
+    public void Retry()
     {
         foreach (var fruit in new List<FruitsController>(_listFruitsController))
         {
             PoolManager.Instance.StackObject(fruit);
         }
         ScoreManager.ResetScore();
-        try
-        {
-        await TiledFadeManager.Instance.FadeOut();
-        }
-        catch (System.OperationCanceledException)
-        {
-            return;
-        }
-        _gameOverUI.SetActive(false);
-        try
-        {
-            await TiledFadeManager.Instance.FadeIn();
-        }
-        catch (System.OperationCanceledException)
-        {
-            return;
-        }
         _isGameOver = false;
+        _gameOverUI.SetActive(_isGameOver);
     }
 
     private FruitsType GetRandomFruitsData()
@@ -105,13 +88,12 @@ public class MainGameManager : SingletonMonoBehaviour<MainGameManager>
             var generatePos = new Vector2
             (
                 Mathf.Clamp
-                (
-                    mouseWorldPos.x,
-                    _fruitsGenerateXPosMin + FruitsData.GetRadiusAccordingType(_nextGenerateFruitsType),
-                    _fruitsGenerateXPosMax - FruitsData.GetRadiusAccordingType(_nextGenerateFruitsType)
+                (mouseWorldPos.x,
+                _fruitsGenerateXPosMin + FruitsData.GetRadiusAccordingType(_nextGenerateFruitsType),
+                _fruitsGenerateXPosMax - FruitsData.GetRadiusAccordingType(_nextGenerateFruitsType)
                 ),
-                _fruitsGenerateYPos
-            );
+
+                _fruitsGenerateYPos);
             if ((int)_nextGenerateFruitsType < _fruitsPrefabsArray.Length)
             {
                 GenerateFruitsByType(_nextGenerateFruitsType, generatePos);
