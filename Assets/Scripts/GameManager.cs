@@ -17,7 +17,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _gameOverUI;
     private static GameObject _staticGameOverUI;
 
+    [SerializeField] private GameStartUI _gameStartUI;
     private static bool _isGameOver = false;
+
+    private static bool _isInGame = false;
 
     [SerializeField] private TMPro.TextMeshProUGUI _pointTMP;
     private static TMPro.TextMeshProUGUI _staticPointTMP;
@@ -60,6 +63,18 @@ public class GameManager : MonoBehaviour
         }
         _listData.Clear();
         SetPoint(0);
+        StartGame();
+    }
+
+    public void StartGame()
+    {
+        _isInGame = false;
+        _gameStartUI.gameObject.SetActive(true);
+        StartCoroutine(_gameStartUI.StartCountDown_Cor(()=>
+        {
+            _isInGame = true;
+            _gameStartUI.gameObject.SetActive(false);
+        }));
     }
 
     // Start is called before the first frame update
@@ -83,13 +98,15 @@ public class GameManager : MonoBehaviour
         //ポイント用UI　初期化
         _staticPointTMP = _pointTMP;
         SetPoint(0);
+
+        StartGame();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (_isGameOver) return;
-
+        if (_isInGame == false) return; 
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 mPos = Input.mousePosition;
