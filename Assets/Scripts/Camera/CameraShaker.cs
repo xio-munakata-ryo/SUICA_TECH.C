@@ -5,13 +5,20 @@ using Cysharp.Threading.Tasks;
 
 public class CameraShaker : SingletonMonoBehaviour<CameraShaker>
 {
-    private Vector3 _originPos = Vector3.zero;
 
     protected override bool dontDestroyOnLoad => true;
 
+    /// <summary>
+    /// カメラを揺らす
+    /// </summary>
+    /// <param name="camera">揺らすカメラ</param>
+    /// <param name="duration">揺らす秒数</param>
+    /// <param name="magnitude">揺れの大きさ</param>
+    /// <param name="speed">揺れの速さ</param>
+    /// <returns></returns>
     public async UniTask Shake(Transform camera, float duration = 0.2f, float magnitude = 0.6f, float speed = 5.0f)
     {
-        _originPos = camera.localPosition;
+        Vector3 originPos = camera.localPosition;
         float timer = 0.0f;
 
         while (timer < duration)
@@ -21,15 +28,15 @@ public class CameraShaker : SingletonMonoBehaviour<CameraShaker>
 
             camera.localPosition = new Vector3
             (
-                _originPos.x + x * magnitude,
-                _originPos.y + y * magnitude,
-                _originPos.z
+                originPos.x + x * magnitude,
+                originPos.y + y * magnitude,
+                originPos.z
             );
 
             timer += Time.deltaTime;
             await UniTask.Yield();
         }
 
-        camera.localPosition = Vector3.Lerp(transform.position, _originPos, Time.deltaTime * 5f);
+        camera.localPosition = Vector3.Lerp(transform.position, originPos, Time.deltaTime * 5f);
     }
 }
