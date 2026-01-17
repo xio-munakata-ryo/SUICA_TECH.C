@@ -18,6 +18,18 @@ public class FruitsController : MonoBehaviour
 
     private float _flashFrame = 0f;
 
+    [SerializeField]
+    private Rigidbody2D _rigidbody = null;
+    public Rigidbody2D Rigidbody => _rigidbody;
+
+    public static void SetAllRigidbodyToCinematic()
+    {
+        foreach (var controller in _listFruitsController)
+        {
+            controller.Rigidbody.simulated = false;
+        }
+    }
+
     public void SetType(FruitsType type)
     {
         _type = type;
@@ -52,6 +64,8 @@ public class FruitsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.IsGameOver) return;
+
         if (this.transform.position.y < -10)
         {
             Destroy(this.gameObject);
@@ -62,8 +76,11 @@ public class FruitsController : MonoBehaviour
         // ゲームオーバー部分を超えてたら、　赤くチカチカさせる
         if (GameManager.OverLineY < this.transform.position.y)
         {
-            _flashFrame += Time.deltaTime; 
-            float per = Mathf.Sin(_flashFrame * Mathf.PI * 14f) * 0.5f + 0.5f;
+            _flashFrame += Time.deltaTime / GameManager.StaticOverLineTimeSec;
+
+            // 最初は遅く、徐々に早く
+            float per = _flashFrame * _flashFrame * _flashFrame * _flashFrame;
+            per = Mathf.Sin(per * Mathf.PI * 14f) * 0.5f + 0.5f;
 
             spriteRenderer.color = Color.Lerp(_color, Color.black, per);
         }
@@ -74,7 +91,7 @@ public class FruitsController : MonoBehaviour
         }
     }
 
-    
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer != 3) return;
@@ -121,7 +138,7 @@ public class FruitsController : MonoBehaviour
 
         foreach (var fruit in _listFruitsController)
         {
-            if (fruit.transform.position.y > y) return true;            
+            if (fruit.transform.position.y > y) return true;
         }
 
         return false;

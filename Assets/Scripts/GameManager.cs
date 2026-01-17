@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     private static GameObject _staticGameOverUI;
 
     private static bool _isGameOver = false;
+    public static bool IsGameOver => _isGameOver;
 
     [SerializeField] private TMPro.TextMeshProUGUI _pointTMP;
     private static TMPro.TextMeshProUGUI _staticPointTMP;
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
     private static LineRenderer _staticOverLine = null;
     public static float OverLineY => _staticOverLine.GetPosition(0).y;
     [SerializeField] private float _overLineTimeSec = 3f;
+    public static float StaticOverLineTimeSec = 3f;
     private float _overLineTimeFrame = 0f;
 
     public static void SetPoint(int point)
@@ -45,6 +48,9 @@ public class GameManager : MonoBehaviour
     {
         _isGameOver = true;
         _staticGameOverUI.SetActive(true);
+        
+        // 背景の物理演算を全て止める
+        FruitsController.SetAllRigidbodyToCinematic();
     }
 
     public void Retry()
@@ -71,6 +77,18 @@ public class GameManager : MonoBehaviour
         _overLineTimeFrame = 0f;
     }
 
+    public IEnumerator InnerRetryCoroutine(float duration = 0.5f)
+    {
+        yield return new WaitForSeconds(duration);
+
+        Retry();
+    }
+
+    public void WaitDurationAndRetry(float duration)
+    {
+        StartCoroutine(InnerRetryCoroutine(duration));
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -95,6 +113,7 @@ public class GameManager : MonoBehaviour
 
         // 超えて一定時間経過するとゲームオーバーなLineを取得
         _staticOverLine = _overLine;
+        StaticOverLineTimeSec = _overLineTimeSec;
     }
 
     // Update is called once per frame
