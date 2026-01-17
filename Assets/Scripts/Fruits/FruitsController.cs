@@ -53,9 +53,9 @@ public class FruitsController : PooledObject
 
         if (other._fruitsData.Type != _fruitsData.Type) return;
 
-        CameraShaker.Instance.Shake(Camera.main.transform, 0.2f, 0.3f, 5f).Forget();
         PoolManager.Instance.StackObject(other);
         FruitsType nextType = _fruitsData.Type + 1;
+        CameraShaker.Instance.Shake(Camera.main.transform, magnitude: (int)nextType * 0.2f).Forget();
         PoolManager.Instance.StackObject(this);
         ScoreManager.AddScore((int)nextType * MainGameManager.Instance.ScoreMultiply);
         if (nextType == FruitsType.Max) return;

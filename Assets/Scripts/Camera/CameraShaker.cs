@@ -5,13 +5,11 @@ using Cysharp.Threading.Tasks;
 
 public class CameraShaker : SingletonMonoBehaviour<CameraShaker>
 {
-    private float _defaultShakeDuration = 0.2f;
-    private float _defaultShakeMagnitude = 0.3f;
     private Vector3 _originPos = Vector3.zero;
 
     protected override bool dontDestroyOnLoad => true;
 
-    public async UniTask Shake(Transform camera, float duration, float magnitude, float speed)
+    public async UniTask Shake(Transform camera, float duration = 0.2f, float magnitude = 0.6f, float speed = 5.0f)
     {
         _originPos = camera.localPosition;
         float timer = 0.0f;
