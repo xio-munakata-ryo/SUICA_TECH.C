@@ -23,5 +23,6 @@ public class CameraManager : MonoBehaviour
             strength = _defaultStrength;
         }
         await transform.DOShakePosition(duration, strength, vibrato, randomness, snapping, fadeOut).ToUniTask();
+        await UniTask.WaitForSeconds(2f);
     }
 }
