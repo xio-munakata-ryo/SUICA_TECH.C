@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
 
         // 背景の物理演算を全て止める
         FruitsController.SetAllRigidbodyToCinematic();
+
+        // BGMを消す
+        MusicManager.Instance.StopBGM();
     }
 
     public void Retry()
@@ -79,6 +82,8 @@ public class GameManager : MonoBehaviour
 
         // ライン越えカウントの初期化
         _overLineTimeFrame = 0f;
+
+        MusicManager.Instance.PlayBGM();
     }
 
     public IEnumerator InnerRetryCoroutine(float duration = 0.5f)
@@ -135,6 +140,8 @@ public class GameManager : MonoBehaviour
         _popFruitsShadow.SetDrawOrder(1000);
         Destroy(_popFruitsShadow.Collider);
         Destroy(_popFruitsShadow.Rigidbody);
+
+        MusicManager.Instance.PlayBGM();
     }
 
     // Update is called once per frame
@@ -176,6 +183,8 @@ public class GameManager : MonoBehaviour
             Color color = ColorPallet[_nextFruitsType];
             color.a = 0.5f;
             _popFruitsShadow.SetColor(color);
+
+            MusicManager.Instance.PlaySE(0); // ポップ音
         }
 
         // フルーツのどれかが境界線を超えたら
