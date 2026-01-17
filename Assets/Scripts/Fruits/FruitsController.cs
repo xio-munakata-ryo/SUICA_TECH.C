@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Score;
+using Cysharp.Threading.Tasks;
 public class FruitsController : PooledObject
 {
     [SerializeField, Header("アクティブであれる最低のY座標")]
@@ -52,6 +53,7 @@ public class FruitsController : PooledObject
 
         if (other._fruitsData.Type != _fruitsData.Type) return;
 
+        CameraShaker.Instance.Shake(Camera.main.transform, 0.2f, 0.3f, 5f).Forget();
         PoolManager.Instance.StackObject(other);
         FruitsType nextType = _fruitsData.Type + 1;
         PoolManager.Instance.StackObject(this);
