@@ -23,6 +23,12 @@ public class GameManager : MonoBehaviour
     private static TMPro.TextMeshProUGUI _staticPointTMP;
     private static int _numPoints = 0;
 
+    [SerializeField] private Animator _gameOverAnimator;
+    private static Animator _staticGameOverAnimator;
+
+    [SerializeField] private CameraManager _cameraManager;
+    private static CameraManager _staticCameraManager;
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
@@ -35,10 +41,13 @@ public class GameManager : MonoBehaviour
         _staticPointTMP.text = $"POINT : {_numPoints.ToString("0000000")}";
     }
 
-    public static void SetGameOver()
+    public static async void SetGameOver()
     {
+        if(_isGameOver) return;
         _isGameOver = true;
         _staticGameOverUI.SetActive(true);
+        await _staticCameraManager.CameraShakeEvent(0.5f, new Vector3(1.2f, 0.4f, 0f), 20, 90, false, true);
+        _staticGameOverAnimator.SetBool("IsGameOver", true);
     }
 
     public void Retry()
@@ -46,6 +55,7 @@ public class GameManager : MonoBehaviour
         // UI群　非表示
         _staticGameOverUI = _gameOverUI;
         _staticGameOverUI.SetActive(false);
+        _staticGameOverAnimator.SetBool("IsGameOver", false);
 
         // フラグ初期化
         _isGameOver = false;
@@ -83,6 +93,12 @@ public class GameManager : MonoBehaviour
         //ポイント用UI　初期化
         _staticPointTMP = _pointTMP;
         SetPoint(0);
+
+        // アニメーター初期化
+        _staticGameOverAnimator = _gameOverAnimator;
+
+        // カメラマネージャー初期化
+        _staticCameraManager = _cameraManager;
     }
 
     // Update is called once per frame
