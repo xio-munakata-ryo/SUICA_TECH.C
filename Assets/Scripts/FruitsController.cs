@@ -18,6 +18,8 @@ public class FruitsController : MonoBehaviour
 
     private Color _color;
 
+    private float _flashFrame = 0f;
+
     public void SetType(FruitsType type)
     {
         _type = type;
@@ -57,6 +59,20 @@ public class FruitsController : MonoBehaviour
             Destroy(this.gameObject);
 
             GameManager.SetGameOver();
+        }
+
+        // ゲームオーバー部分を超えてたら、　赤くチカチカさせる
+        if (GameManager.OverLineY < this.transform.position.y)
+        {
+            _flashFrame += Time.deltaTime; 
+            float per = Mathf.Sin(_flashFrame * Mathf.PI * 14f) * 0.5f + 0.5f;
+
+            spriteRenderer.color = Color.Lerp(_color, Color.black, per);
+        }
+        else
+        {
+            _flashFrame = 0f;
+            spriteRenderer.color = _color;
         }
     }
 
@@ -100,5 +116,16 @@ public class FruitsController : MonoBehaviour
 
             GameManager.AddPoint((int)nextType);
         }
+    }
+
+    public static bool HasOverLineFrouts(float y)
+    {
+
+        foreach (var fruit in _listFruitsController)
+        {
+            if (fruit.transform.position.y > y) return true;            
+        }
+
+        return false;
     }
 }

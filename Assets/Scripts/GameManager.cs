@@ -23,6 +23,12 @@ public class GameManager : MonoBehaviour
     private static TMPro.TextMeshProUGUI _staticPointTMP;
     private static int _numPoints = 0;
 
+    [SerializeField] private LineRenderer _overLine = null;
+    private static LineRenderer _staticOverLine = null;
+    public static float OverLineY => _staticOverLine.GetPosition(0).y;
+    [SerializeField] private float _overLineTimeSec = 3f;
+    private float _overLineTimeFrame = 0f;
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
@@ -53,13 +59,16 @@ public class GameManager : MonoBehaviour
         // リトライになったら、全てのフルーツを消す
         foreach (var d in _listData)
         {
-            if(d.FruitsObj != null)
+            if (d.FruitsObj != null)
             {
                 Destroy(d.FruitsObj.gameObject);
             }
         }
         _listData.Clear();
         SetPoint(0);
+
+        // ライン越えカウントの初期化
+        _overLineTimeFrame = 0f;
     }
 
     // Start is called before the first frame update
@@ -80,9 +89,12 @@ public class GameManager : MonoBehaviour
         // フラグ初期化
         _isGameOver = false;
 
-        //ポイント用UI　初期化
+        // ポイント用UI　初期化
         _staticPointTMP = _pointTMP;
         SetPoint(0);
+
+        // 超えて一定時間経過するとゲームオーバーなLineを取得
+        _staticOverLine = _overLine;
     }
 
     // Update is called once per frame
@@ -98,7 +110,7 @@ public class GameManager : MonoBehaviour
 
             if (wPos.x < -1.6) fruitsPopPos.x = -1.6f;
             if (wPos.x > 1.6) fruitsPopPos.x = 1.6f;
-            fruitsPopPos.y = 2.5f;
+            fruitsPopPos.y = OverLineY;
 
             FruitsType popedFruitsType
              = (FruitsType)(UnityEngine.Random.Range(0, _listPrefabFruits.Count) + 1);
@@ -111,6 +123,21 @@ public class GameManager : MonoBehaviour
             c.SetData(d);
             c.SetColor(ColorPallet[popedFruitsType]);
             _listData.Add(d);
+        }
+
+        // フルーツのどれかが境界線を超えたら
+        if (_isGameOver == false && FruitsController.HasOverLineFrouts(OverLineY))
+        {
+            _overLineTimeFrame += Time.deltaTime;
+
+            if (_overLineTimeFrame >= _overLineTimeSec)
+            {
+                SetGameOver();
+            }
+        }
+        else
+        {
+            _overLineTimeFrame = 0f;
         }
     }
 }
