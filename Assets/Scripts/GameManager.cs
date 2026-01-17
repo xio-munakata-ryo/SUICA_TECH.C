@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     private static TMPro.TextMeshProUGUI _staticPointTMP;
     private static int _numPoints = 0;
 
+    private static CameraShake _cameraShake;
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
     {
         _isGameOver = true;
         _staticGameOverUI.SetActive(true);
+        // _cameraShake
     }
 
     public void Retry()
@@ -66,6 +69,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UnityEngine.Random.InitState(DateTime.UtcNow.Millisecond);
+
+        _cameraShake = Camera.main.GetComponent<CameraShake>();
 
         for (int i = 0; i < _listPrefabFruits.Count; i++)
         {
