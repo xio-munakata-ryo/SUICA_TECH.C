@@ -9,12 +9,12 @@ public class CameraManager : MonoBehaviour
     /// <summary>
     /// カメラが揺れる演出
     /// </summary>
-    /// <param name="duration"></param>
-    /// <param name="strength"></param>
-    /// <param name="vibrato"></param>
-    /// <param name="randomness"></param>
-    /// <param name="snapping"></param>
-    /// <param name="fadeOut"></param>
+    /// <param name="duration">揺れの時間</param>
+    /// <param name="strength">揺れの強さ</param>
+    /// <param name="vibrato">揺れの回数</param>
+    /// <param name="randomness">揺れのランダム性</param>
+    /// <param name="snapping">揺れのスナップ</param>
+    /// <param name="fadeOut">揺れのフェード</param>
     /// <returns></returns>
     public async UniTask CameraShakeEvent(float duration = 1f, Vector3 strength = default, int vibrato = 10, float randomness = 90, bool snapping = false, bool fadeOut = true)
     {
