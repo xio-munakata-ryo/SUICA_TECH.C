@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -81,6 +82,9 @@ public class FruitsController : MonoBehaviour
         {
             // 相手側消す
             Destroy(other.gameObject);
+
+            // 画面揺れ
+            CameraMove.Instance.PlayShake(0.15f, 0.2f);
 
             // 自分成長
             FruitsType nextType = this.Type + 1;

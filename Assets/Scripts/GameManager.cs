@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
     [SerializeField]
     private List<FruitsController> _listPrefabFruits = new List<FruitsController>();
 
