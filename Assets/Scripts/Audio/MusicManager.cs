@@ -68,6 +68,8 @@ public class MusicManager : MonoBehaviour
     private Coroutine _fadeInCoroutine = null;
     private Coroutine _fadeOutCoroutine = null;
 
+    private List<Coroutine> _listCoroutines = new List<Coroutine>();
+
     private int _currentBGMIndex = 0;
 
     public void PlaySE(int id)
@@ -78,9 +80,12 @@ public class MusicManager : MonoBehaviour
     public void StopBGM()
     {
         // FadeOut FadeIn が残っていたら、処理を破棄する
-        if (_fadeInCoroutine != null) _fadeInCoroutine = null;
-
-        if (_fadeOutCoroutine != null) _fadeOutCoroutine = null; 
+        for (int i = 0; i < _listCoroutines.Count; i++)
+        {
+            if (_listCoroutines[i] != null) _listCoroutines[i] = null;
+        }
+        _listCoroutines.Clear();
+        
         _fadeOutCoroutine = StartCoroutine(FadeOut_Cor(_currentAs));
     }
 
@@ -100,7 +105,7 @@ public class MusicManager : MonoBehaviour
     {
         if (_acBgms.Count > 0)
         {
-            if(_acBgms.Count > 1)
+            if (_acBgms.Count > 1)
             {
                 _currentBGMIndex = UnityEngine.Random.Range(0, _acBgms.Count);
             }
@@ -108,8 +113,10 @@ public class MusicManager : MonoBehaviour
             _nextAs.Play();
             _nextAs.volume = 0f;
             _fadeInCoroutine = StartCoroutine(FadeIn_Cor(_nextAs));
+            _listCoroutines.Add(_fadeInCoroutine);
             _currentBGMLengthTimeSec = _acBgms[_currentBGMIndex].length;
-            StartCoroutine(AutoChangeBGM_Cor(_nextAs, _currentAs));
+            var c = StartCoroutine(AutoChangeBGM_Cor(_nextAs, _currentAs));
+            _listCoroutines.Add(c);
             _currentAudioSourceIsIndexZero = !_currentAudioSourceIsIndexZero;
         }
     }
@@ -118,12 +125,12 @@ public class MusicManager : MonoBehaviour
     {
         yield return new WaitForSeconds(_currentBGMLengthTimeSec - _fadeOutTimeSec);
         // FadeOutをさせる際に、フェイドインが残っていたら、処理を破棄する
-        if (_fadeInCoroutine != null) _fadeInCoroutine = null; 
+        if (_fadeInCoroutine != null) _fadeInCoroutine = null;
         _fadeOutCoroutine = StartCoroutine(FadeOut_Cor(beOutAs));
-
+        _listCoroutines.Add(_fadeOutCoroutine);
         // クロスフェード開始
         int index = 0;
-        if(_acBgms.Count > 1)
+        if (_acBgms.Count > 1)
         {
             UnityEngine.Random.Range(0, _acBgms.Count - 1);
             if (_currentBGMIndex == index) index++;
@@ -133,12 +140,14 @@ public class MusicManager : MonoBehaviour
         beInAs.Play();
         beInAs.volume = 0f;
         _fadeInCoroutine = StartCoroutine(FadeIn_Cor(beInAs));
+        _listCoroutines.Add(_fadeInCoroutine);
         _currentBGMLengthTimeSec = _acBgms[index].length;
-        StartCoroutine(AutoChangeBGM_Cor(beInAs, beOutAs));
+        var c = StartCoroutine(AutoChangeBGM_Cor(beInAs, beOutAs));
+        _listCoroutines.Add(c);
         _currentAudioSourceIsIndexZero = !_currentAudioSourceIsIndexZero;
 
         yield return new WaitForSeconds(_fadeOutTimeSec);
-        
+
         beOutAs.Stop();
     }
 
@@ -160,7 +169,7 @@ public class MusicManager : MonoBehaviour
         }
         audioSource.Stop();
     }
-    
+
     private IEnumerator FadeIn_Cor(AudioSource audioSource)
     {
         float frame = 0f;

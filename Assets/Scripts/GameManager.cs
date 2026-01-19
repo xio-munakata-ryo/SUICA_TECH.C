@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -36,6 +35,9 @@ public class GameManager : MonoBehaviour
 
     private FruitsType _nextFruitsType = FruitsType.None;
 
+    [SerializeField] RankingManager _rankingManager = null;
+    private static RankingManager _staticRankingManager = null;
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
@@ -58,6 +60,10 @@ public class GameManager : MonoBehaviour
 
         // BGMを消す
         MusicManager.Instance.StopBGM();
+
+        // ランキングを表示
+        _staticRankingManager.AddRank("AAA", _numPoints, true);
+        _staticRankingManager.InitRankingView(); // 表示
     }
 
     public void Retry()
@@ -84,6 +90,8 @@ public class GameManager : MonoBehaviour
         _overLineTimeFrame = 0f;
 
         MusicManager.Instance.PlayBGM();
+
+        _rankingManager.ClearRankingView();
     }
 
     public IEnumerator InnerRetryCoroutine(float duration = 0.5f)
@@ -101,6 +109,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         UnityEngine.Random.InitState(DateTime.UtcNow.Millisecond);
 
         for (int i = 0; i < _listPrefabFruits.Count; i++)
@@ -142,6 +151,8 @@ public class GameManager : MonoBehaviour
         Destroy(_popFruitsShadow.Rigidbody);
 
         MusicManager.Instance.PlayBGM();
+
+        _staticRankingManager = _rankingManager;
     }
 
     // Update is called once per frame
