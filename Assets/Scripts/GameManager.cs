@@ -38,16 +38,23 @@ public class GameManager : MonoBehaviour
     [SerializeField] RankingManager _rankingManager = null;
     private static RankingManager _staticRankingManager = null;
 
+    public static void DrawPointText(TMPro.TextMeshProUGUI tmpro, int point)
+    {
+        // レビュー対応で、桁数を１２－＞０に変化
+        // 見た目のわかりやすさ（視認性）確保と、争う感じをよくだしたかったため
+        tmpro.text = point.ToString("0");
+    }
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
-        _staticPointTMP.text = $"POINT : {_numPoints.ToString("0000000")}";
+        GameManager.DrawPointText(_staticPointTMP, _numPoints);
     }
 
     public static void AddPoint(int point)
     {
         _numPoints += point;
-        _staticPointTMP.text = $"POINT : {_numPoints.ToString("0000000")}";
+        GameManager.DrawPointText(_staticPointTMP, _numPoints);
     }
 
     public static void SetGameOver()

@@ -18,7 +18,7 @@ public class RankingNode : MonoBehaviour
 
     public void SetPointTxt(int point)
     {
-        _pointTxt.text = point.ToString("000000000000");
+        GameManager.DrawPointText(_pointTxt, point);
     }
 
     public void SetFlashBackImage()
