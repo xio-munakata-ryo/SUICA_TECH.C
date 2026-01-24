@@ -100,7 +100,6 @@ public class MusicManager : MonoBehaviour
         _seDefaultVolume = _asSe.volume;
     }
 
-    // Start is called before the first frame update
     public void PlayBGM()
     {
         if (_acBgms.Count > 0)

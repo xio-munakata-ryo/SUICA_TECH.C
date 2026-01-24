@@ -23,10 +23,10 @@ public class RankingNode : MonoBehaviour
 
     public void SetFlashBackImage()
     {
-        StartCoroutine(FlashBackCor());
+        StartCoroutine(FlashBack_Cor());
     }
 
-    private IEnumerator FlashBackCor()
+    private IEnumerator FlashBack_Cor()
     {
         float frame = 0f;
 
