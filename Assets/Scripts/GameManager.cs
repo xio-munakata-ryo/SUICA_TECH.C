@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -36,16 +35,26 @@ public class GameManager : MonoBehaviour
 
     private FruitsType _nextFruitsType = FruitsType.None;
 
+    [SerializeField] RankingManager _rankingManager = null;
+    private static RankingManager _staticRankingManager = null;
+
+    public static void DrawPointText(TMPro.TextMeshProUGUI tmpro, int point)
+    {
+        // レビュー対応で、桁数を１２－＞０に変化
+        // 見た目のわかりやすさ（視認性）確保と、争う感じをよくだしたかったため
+        tmpro.text = point.ToString("0");
+    }
+
     public static void SetPoint(int point)
     {
         _numPoints = point;
-        _staticPointTMP.text = $"POINT : {_numPoints.ToString("0000000")}";
+        GameManager.DrawPointText(_staticPointTMP, _numPoints);
     }
 
     public static void AddPoint(int point)
     {
         _numPoints += point;
-        _staticPointTMP.text = $"POINT : {_numPoints.ToString("0000000")}";
+        GameManager.DrawPointText(_staticPointTMP, _numPoints);
     }
 
     public static void SetGameOver()
@@ -55,6 +64,13 @@ public class GameManager : MonoBehaviour
 
         // 背景の物理演算を全て止める
         FruitsController.SetAllRigidbodyToCinematic();
+
+        // BGMを消す
+        MusicManager.Instance.StopBGM();
+
+        // ランキングを表示
+        _staticRankingManager.AddRank("AAA", _numPoints, true);
+        _staticRankingManager.InitRankingView(); // 表示
     }
 
     public void Retry()
@@ -79,6 +95,10 @@ public class GameManager : MonoBehaviour
 
         // ライン越えカウントの初期化
         _overLineTimeFrame = 0f;
+
+        MusicManager.Instance.PlayBGM();
+
+        _rankingManager.ClearRankingView();
     }
 
     public IEnumerator InnerRetryCoroutine(float duration = 0.5f)
@@ -96,6 +116,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         UnityEngine.Random.InitState(DateTime.UtcNow.Millisecond);
 
         for (int i = 0; i < _listPrefabFruits.Count; i++)
@@ -135,6 +156,10 @@ public class GameManager : MonoBehaviour
         _popFruitsShadow.SetDrawOrder(1000);
         Destroy(_popFruitsShadow.Collider);
         Destroy(_popFruitsShadow.Rigidbody);
+
+        MusicManager.Instance.PlayBGM();
+
+        _staticRankingManager = _rankingManager;
     }
 
     // Update is called once per frame
@@ -176,6 +201,8 @@ public class GameManager : MonoBehaviour
             Color color = ColorPallet[_nextFruitsType];
             color.a = 0.5f;
             _popFruitsShadow.SetColor(color);
+
+            MusicManager.Instance.PlaySE(0); // ポップ音
         }
 
         // フルーツのどれかが境界線を超えたら

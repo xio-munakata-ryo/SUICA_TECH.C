@@ -177,6 +177,8 @@ public class FruitsController : MonoBehaviour
                 this.transform.position = Vector3.Lerp(this.transform.position, other.transform.position, 0.5f);
 
                 this.Pop();
+
+                MusicManager.Instance.PlaySE(1); // 合体音
             }
 
             GameManager.AddPoint((int)nextType);
