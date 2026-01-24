@@ -74,9 +74,9 @@ public class RankingManager : MonoBehaviour
             _listRankWrapper.ListRank.RemoveRange(5, _listRankWrapper.ListRank.Count - 5);
         }
 
-        for (int i = 0; i < _listRankWrapper.ListRank.Count; i++)
+        foreach(var rw in _listRankWrapper.ListRank)
         {
-            var rank = _listRankWrapper.ListRank[i];
+            var rank = rw;
             RankingNode node = Instantiate(_prefabNode);
             node.SetNameTxt(rank.Name);
             node.SetPointTxt(rank.Score);
