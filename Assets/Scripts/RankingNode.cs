@@ -18,15 +18,15 @@ public class RankingNode : MonoBehaviour
 
     public void SetPointTxt(int point)
     {
-        GameManager.DrawPointText(_pointTxt, point);
+        MainGameManager.DrawPointText(_pointTxt, point);
     }
 
     public void SetFlashBackImage()
     {
-        StartCoroutine(FlashBack_Cor());
+        StartCoroutine(FlashBackCor());
     }
 
-    private IEnumerator FlashBack_Cor()
+    private IEnumerator FlashBackCor()
     {
         float frame = 0f;
 
