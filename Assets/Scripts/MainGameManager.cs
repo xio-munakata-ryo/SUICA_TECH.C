@@ -72,6 +72,11 @@ public class MainGameManager : SingletonMonoBehaviour<MainGameManager>
         _isGameOver = false;
     }
 
+    public static void DrawPointText(TMPro.TextMeshProUGUI tmp, int point)
+    {
+        tmp.text = point.ToString("0");
+    }
+
     private FruitsType GetRandomFruitsData()
     {
         int typeIndex = Random.Range(1, 3);
